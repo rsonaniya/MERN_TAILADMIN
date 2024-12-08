@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 const FormLayout = () => {
   const [category, setCategory] = useState<string>('');
   const url = import.meta.env.VITE_API_URL;
 
-  const handleAddCategory = async () => {
-    if (!category) return alert('category is required');
+  const handleAddCategory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!category) return;
     const body = JSON.stringify({ category });
 
     try {
@@ -29,7 +30,7 @@ const FormLayout = () => {
       <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
         <h3 className="font-medium text-black dark:text-white">Add Category</h3>
       </div>
-      <form action="#">
+      <form onSubmit={handleAddCategory}>
         <div className="p-6.5">
           <div className="mb-4.5">
             <label className="mb-2.5 block text-black dark:text-white">
@@ -45,7 +46,6 @@ const FormLayout = () => {
           </div>
           <button
             className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 disabled:cursor-not-allowed disabled:bg-blue-300"
-            onClick={handleAddCategory}
             disabled={!category}
           >
             Submit

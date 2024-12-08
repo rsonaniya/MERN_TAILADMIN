@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
+import Loader from '../../common/Loader';
 
 interface CategoriesRes {
   _id: string;
@@ -13,6 +14,7 @@ interface FormData {
 
 const FormElements = () => {
   const [categories, setCategories] = useState<CategoriesRes[]>([]);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     question: '',
     masterId: '',
@@ -48,6 +50,7 @@ const FormElements = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
+        setLoading(true);
         const res = await fetch(`${url}/api/master`);
 
         if (!res.ok) throw new Error('Could not fech categories');
@@ -55,6 +58,8 @@ const FormElements = () => {
         setCategories(cat);
       } catch (error) {
         setCategories([]);
+      } finally {
+        setLoading(false);
       }
     };
     fetchCategories();
@@ -91,25 +96,30 @@ const FormElements = () => {
                 <label className="mb-3 block font-medium text-black dark:text-white">
                   Select Category
                 </label>
-                <select
-                  placeholder="Select Category"
-                  className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary dark:disabled:bg-black"
-                  value={formData.masterId}
-                  onChange={(e) =>
-                    setFormData({ ...formData, masterId: e.target.value })
-                  }
-                >
-                  <option value="">Select a Category</option>
-                  {categories.map((category) => (
-                    <option key={category._id} value={category._id}>
-                      {category.category}
-                    </option>
-                  ))}
-                </select>
+                {loading ? (
+                  <Loader />
+                ) : (
+                  <select
+                    placeholder="Select Category"
+                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary dark:disabled:bg-black"
+                    value={formData.masterId}
+                    onChange={(e) =>
+                      setFormData({ ...formData, masterId: e.target.value })
+                    }
+                  >
+                    <option value="">Select a Category</option>
+                    {categories.map((category) => (
+                      <option key={category._id} value={category._id}>
+                        {category.category}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
               <button
-                className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90"
+                className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 disabled:cursor-not-allowed disabled:bg-blue-300"
                 onClick={handlePostQuestion}
+                disabled={!formData.masterId || !formData.question}
               >
                 Post Question
               </button>
