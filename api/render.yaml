@@ -1,0 +1,16 @@
+services:
+  - name: MERN_TAILADMIN
+    type: web
+    env: node
+    region: oregon
+    buildCommand: npm install
+    startCommand: npm start
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: DATABASE_URL
+        value: mongodb+srv://rajatsonaniya28:rajatsonaniya@cluster0.nt9mzf3.mongodb.net/tailadmin?retryWrites=true&w=majority&appName=Cluster0
